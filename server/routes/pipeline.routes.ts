@@ -1,19 +1,19 @@
 import { Hono } from "hono";
 
-const pipelines = new Hono();
+const pipeline = new Hono();
 
-pipelines.post("/", (c) => {
+pipeline.post("/", (c) => {
   return c.json({ message: "create a new pipeline" });
 });
 
-pipelines.get("/:projectId", (c) => {
+pipeline.get("/:projectId", (c) => {
   const { projectId } = c.req.param();
-  return c.json({ message: `get pipelines for project with id ${projectId}` });
+  return c.json({ message: `get pipeline for project with id ${projectId}` });
 });
 
-pipelines.put("/:id", (c) => {
+pipeline.put("/:id", (c) => {
   const { id } = c.req.param();
   return c.json({ message: `update pipeline with id ${id}` });
 });
 
-export default pipelines;
+export default pipeline;
