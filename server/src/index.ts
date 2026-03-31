@@ -1,8 +1,11 @@
 import { Hono } from "hono";
-import project from "../routes/project.routes";
-import pipeline from "../routes/pipeline.routes";
-import run from "../routes/run.routes";
-import webhook from "../routes/webhook.routes";
+import project from "./routes/project.routes";
+import pipeline from "./routes/pipeline.routes";
+import run from "./routes/run.routes";
+import webhook from "./routes/webhook.routes";
+import connectDb from "./config/db";
+
+await connectDb();
 
 const app = new Hono();
 

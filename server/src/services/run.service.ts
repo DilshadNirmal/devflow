@@ -1,6 +1,7 @@
 import { RunModel } from "../models/models";
+import { CreateRun } from "../types";
 
-const createRun = async (pipelineId: string, runData: any) => {
+const createRun = async (pipelineId: string, runData: CreateRun) => {
   try {
     await RunModel.create({ ...runData, pipeline: pipelineId });
   } catch (error) {
@@ -24,4 +25,4 @@ const getRunById = async (runId: string) => {
   }
 };
 
-export { createRun, getRunsByProjectid, getRunById };
+export { createRun, getRunsByProjectId, getRunById };

@@ -1,6 +1,7 @@
 import { PipelineModel } from "../models/models";
+import { CreatePipeline } from "../types";
 
-const createPipeline = async (pipelineData: any) => {
+const createPipeline = async (pipelineData: CreatePipeline) => {
   try {
     return await PipelineModel.create(pipelineData);
   } catch (error) {
@@ -20,7 +21,10 @@ const getPipelineByProjectId = async (projectId: string) => {
   }
 };
 
-const updatePipeline = async (pipelineId: string, pipelineData: any) => {
+const updatePipeline = async (
+  pipelineId: string,
+  pipelineData: Partial<CreatePipeline>,
+) => {
   try {
     return await PipelineModel.findByIdAndUpdate(pipelineId, pipelineData, {
       new: true,

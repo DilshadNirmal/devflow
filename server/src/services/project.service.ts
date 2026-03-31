@@ -1,10 +1,11 @@
 import { ProjectModel } from "../models/models";
+import { CreateProject } from "../types";
 
-const createProject = async (projectData: any) => {
+const createProject = async (projectData: CreateProject) => {
   try {
     return await ProjectModel.create(projectData);
   } catch (error) {
-    throw new Error(`Failed to create project: ${projectData.name}`);
+    throw new Error(`Failed to create project: ${projectData.repo_name}`);
   }
 };
 
