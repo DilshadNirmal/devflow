@@ -1,0 +1,6 @@
+runner
+*.exe
+
+.env
+
+*.test
