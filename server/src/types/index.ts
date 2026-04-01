@@ -23,3 +23,16 @@ export interface CreateRun {
   started_at?: Date;
   finished_at?: Date | null;
 }
+
+export interface GithubWebhookPayload {
+  ref: string;
+  repository: {
+    name: string;
+    url: string;
+  };
+  head_commit: {
+    id: string;
+    message: string;
+    timestamp: string;
+  };
+}
