@@ -1,15 +1,18 @@
 export type Project = {
   _id: string;
-  name: string;
   repo_name: string;
   repo_url: string;
+  branch_name: string;
+  owner: string;
+  webhook_id: string;
+  webhook_secret: string;
 };
 
 export type Run = {
   _id: string;
   project: string;
   pipeline: string;
-  status: "pending" | "running" | "completed" | "failed";
+  status: "pending" | "running" | "success" | "failed";
   logs: string[];
   started_at: string;
   finished_at: string | null;

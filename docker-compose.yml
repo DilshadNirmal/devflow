@@ -5,20 +5,24 @@ services:
       - "27018:27017"
     volumes:
       - mongo_data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
 
   server:
     build: ./server
     ports:
       - "3000:3000"
     environment:
-      - MONGODB_URI=mongodb://mongo:27017/devflow
+      - MONGODB_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017/devflow?authSource=admin
     depends_on:
       - mongo
 
   runner:
     build: ./runner
     environment:
-      - MONGODB_URI=mongodb://mongo:27017/devflow
+      - MONGODB_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017/devflow?authSource=admin
+      - SERVER_URL=http://server:3000
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:

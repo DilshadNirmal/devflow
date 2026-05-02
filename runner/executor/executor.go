@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/docker/docker/api/types/container"
@@ -55,7 +56,7 @@ func Execute(pipeline models.Pipeline, run models.Run) error {
 			line := scanner.Text()
 			log.Println(line)
 			_, _ = http.Post(
-				fmt.Sprintf("http://localhost:3000/api/runs/%s/logs", run.ID.Hex()),
+				fmt.Sprintf("%s/api/run/%s/logs", os.Getenv("SERVER_URL"), run.ID.Hex()),
 				"application/json",
 				strings.NewReader(fmt.Sprintf(`{"log": "%s"}`, line)),
 			)
