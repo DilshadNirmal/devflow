@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"devflow/runner/db"
+	"devflow/runner/executor"
 	"devflow/runner/models"
 	"log"
 	"os"
@@ -35,9 +36,28 @@ func startPolling(database *mongo.Database) {
 			if err != nil {
 				log.Println("Error fetching pipeline:", err)
 			} else {
-				log.Println("Found pipeline:", pipeline.ID)
-			}
+				err = executor.Execute(pipeline, run)
+				if err != nil {
+					log.Println("Error executing pipeline:", err)
 
+					// update status to failed here
+					ctx3, cancel3 := context.WithTimeout(context.Background(), 10*time.Second)
+					_, err = database.Collection("runs").UpdateOne(ctx3,
+					bson.D{{ Key: "_id", Value: run.ID}},
+					bson.D{{ Key: "$set", Value: bson.D{{Key: "status", Value: "failed"}}}}
+					)
+					cancel3()
+				} else {
+					log.Println("Pipeline executed successfully:", run.ID)
+					// update status to completed here
+					ctx3, cancel3 := context.WithTimeout(context.Background(), 10*time.Second)
+					_, err = database.Collection("runs").UpdateOne(ctx3,
+					bson.D{{ Key: "_id", Value: run.ID}},
+					bson.D{{ Key: "$set", Value: bson.D{{Key: "status", Value: "completed"}}}}
+					)
+					cancel3()
+				}
+			}
 		}
 
 		time.Sleep(5 * time.Second)
