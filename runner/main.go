@@ -44,7 +44,7 @@ func startPolling(database *mongo.Database) {
 					ctx3, cancel3 := context.WithTimeout(context.Background(), 10*time.Second)
 					_, err = database.Collection("runs").UpdateOne(ctx3,
 					bson.D{{ Key: "_id", Value: run.ID}},
-					bson.D{{ Key: "$set", Value: bson.D{{Key: "status", Value: "failed"}}}}
+					bson.D{{ Key: "$set", Value: bson.D{{Key: "status", Value: "failed"}}}},
 					)
 					cancel3()
 				} else {
@@ -53,7 +53,7 @@ func startPolling(database *mongo.Database) {
 					ctx3, cancel3 := context.WithTimeout(context.Background(), 10*time.Second)
 					_, err = database.Collection("runs").UpdateOne(ctx3,
 					bson.D{{ Key: "_id", Value: run.ID}},
-					bson.D{{ Key: "$set", Value: bson.D{{Key: "status", Value: "completed"}}}}
+					bson.D{{ Key: "$set", Value: bson.D{{Key: "status", Value: "completed"}}}},
 					)
 					cancel3()
 				}
