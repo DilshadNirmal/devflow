@@ -12,12 +12,12 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
-func startPolling(collection *mongo.Collection) {
+func startPolling(database *mongo.Database) {
 	for {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 
 		var run models.Run
-		err := collection.FindOne(ctx, bson.D{{ Key: "status", Value: "pending"}}).Decode(&run)
+		err := database.Collection("runs").FindOne(ctx, bson.D{{ Key: "status", Value: "pending"}}).Decode(&run)
 		cancel()
 
 		if err == mongo.ErrNoDocuments {
@@ -26,6 +26,18 @@ func startPolling(collection *mongo.Collection) {
 			log.Println("Error querying runs:", err)
 		} else {
 			log.Println("Found pending runs: ", run.ID)
+
+			ctx2, cancel2 := context.WithTimeout(context.Background(), 10*time.Second)
+			var pipeline models.Pipeline
+			err = database.Collection("pipelines").FindOne(ctx2, bson.D{{ Key: "_id", Value: run.Pipeline}}).Decode(&pipeline)
+			cancel2()
+
+			if err != nil {
+				log.Println("Error fetching pipeline:", err)
+			} else {
+				log.Println("Found pipeline:", pipeline.ID)
+			}
+
 		}
 
 		time.Sleep(5 * time.Second)
@@ -38,7 +50,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	collection := client.Database("devflow").Collection("runs");
-	startPolling(collection)
+	database := client.Database("devflow")
+	startPolling(database)
 	
 }
