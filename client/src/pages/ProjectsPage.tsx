@@ -6,9 +6,9 @@ const ProjectsPage = () => {
   const [projects, setProjects] = useState<Project[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/projects")
+    fetch("http://localhost:3000/api/project")
       .then((res) => res.json())
-      .then((data) => setProjects(data));
+      .then((data) => setProjects(data.projects));
   }, []);
 
   return (

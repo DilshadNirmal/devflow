@@ -7,7 +7,7 @@ const ProjectDetailPage = () => {
   const [runs, setRuns] = useState<Run[]>([]);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/project/:projectId`)
+    fetch(`http://localhost:3000/api/run/project/${id}`)
       .then((res) => res.json())
       .then((data) => setRuns(data));
   }, [id]);
