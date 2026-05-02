@@ -1,5 +1,7 @@
 import { Hono } from "hono";
 import { getRunById, getRunsByProjectId } from "../services/run.service";
+import { clients } from "./ws.routes";
+import { RunModel } from "../models/models";
 
 const run = new Hono();
 
@@ -33,6 +35,20 @@ run.get("/:id", async (c) => {
     console.error((error as Error).message);
     return c.json({ error: (error as Error).message }, 500);
   }
+});
+
+run.post("/:id/logs", async (c) => {
+  const id = c.req.param("id") ?? "";
+  const { log } = await c.req.json<{ log: string }>();
+
+  await RunModel.updateOne({ _id: id }, { $push: { logs: log } });
+
+  const ws = clients.get(id);
+  if (ws) {
+    ws.send(log);
+  }
+
+  return c.json({ message: "log saved" }, 200);
 });
 
 export default run;

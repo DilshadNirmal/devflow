@@ -1,11 +1,13 @@
 package executor
 
 import (
+	"bufio"
 	"context"
 	"devflow/runner/models"
-
-	"io"
-	"os"
+	"fmt"
+	"log"
+	"net/http"
+	"strings"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
@@ -47,7 +49,21 @@ func Execute(pipeline models.Pipeline, run models.Run) error {
 			return err
 		}
 		defer logReader.Close()
-		io.Copy(os.Stdout, logReader)
+		
+		scanner := bufio.NewScanner(logReader)
+		for scanner.Scan() {
+			line := scanner.Text()
+			log.Println(line)
+			_, _ = http.Post(
+				fmt.Sprintf("http://localhost:3000/api/runs/%s/logs", run.ID.Hex()),
+				"application/json",
+				strings.NewReader(fmt.Sprintf(`{"log": "%s"}`, line)),
+			)
+		}
+
+		if err := scanner.Err(); err != nil {
+			return err
+		}
 
 		statusCh, errCh := cli.ContainerWait(ctx, resp.ID, container.WaitConditionNotRunning)
 		select {
