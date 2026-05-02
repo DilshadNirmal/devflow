@@ -1,26 +1,29 @@
 services:
   mongo:
     image: mongo:7
-    ports: -"27017:27017"
-    volumes: -mongo_data:/data/db
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo_data:/data/db
 
   server:
-    build: -/server
-    ports: -"3000:3000"
+    build: ./server
+    ports:
+      - "3000:3000"
     environment:
-      - MONODB_URI=mongodb://mongo:27017/devflow
+      - MONGODB_URI=mongodb://mongo:27017/devflow
     depends_on:
       - mongo
 
   runner:
-    build: -/runner
+    build: ./runner
     environment:
-      - MONGODB=mongodb://mongo:27017/devflow
+      - MONGODB_URI=mongodb://mongo:27017/devflow
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - mongo
       - server
 
-  volumes:
-    mongo_data:
+volumes:
+  mongo_data:
